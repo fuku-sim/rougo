@@ -186,22 +186,22 @@ svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
 (function(){
 "use strict";
 var FREQ=[[0,"1回"],[1,"毎年"],[5,"5年ごと"],[10,"10年ごと"],[15,"15年ごと"],[20,"20年ごと"]];
-var EX={age:50,spouse:true,sAge:48,retire:60,endAge:95,pen1:15,pen2:8,penAge:65,penNet:90,work:20,workTo:64,other:0,otherFrom:65,otherTo:85,slide:true,
-  living:28,lateAge:80,latePct:80,assets:1200,monthly:5,lump:1500,ret:3,infl:2,
+var EX={age:50,spouse:true,sAge:48,retire:65,endAge:95,pen1:15,pen2:8,penAge:65,penNet:90,work:0,workTo:70,other:0,otherFrom:65,otherTo:85,slide:true,
+  living:27,lateAge:80,latePct:80,assets:1500,monthly:8,lump:1800,ret:3,infl:2,
   ev:[
-    {on:true,n:"住宅ローン（退職後に残る分）",a:0,f:1,from:60,to:65},
-    {on:true,n:"車の買い替え",a:250,f:10,from:55,to:74},
+    {on:true,n:"住宅ローン（退職後に残る分）",a:0,f:1,from:65,to:70},
+    {on:true,n:"車の買い替え",a:250,f:10,from:60,to:70},
     {on:true,n:"車の保険・税金・車検",a:15,f:1,from:60,to:74},
-    {on:true,n:"車を手放した後のタクシー・配車",a:36,f:1,from:75,to:95},
-    {on:true,n:"住宅のリフォーム・修繕",a:300,f:15,from:60,to:75},
-    {on:true,n:"旅行・趣味",a:50,f:1,from:65,to:79},
+    {on:true,n:"車を手放した後のタクシー・配車",a:24,f:1,from:75,to:95},
+    {on:true,n:"住宅のリフォーム・修繕",a:300,f:0,from:65,to:65},
+    {on:true,n:"旅行・趣味",a:30,f:1,from:65,to:79},
     {on:true,n:"子の結婚・住宅の援助",a:200,f:0,from:58,to:58},
-    {on:true,n:"孫へのお祝い・お年玉",a:10,f:1,from:60,to:85},
+    {on:true,n:"孫へのお祝い・お年玉",a:5,f:1,from:65,to:85},
     {on:true,n:"医療費の備え（夫婦）",a:400,f:0,from:75,to:75},
-    {on:true,n:"介護の備え（夫婦）",a:1000,f:0,from:82,to:82},
-    {on:false,n:"家電・家具の買い替え",a:20,f:1,from:60,to:90}
+    {on:true,n:"介護の備え（夫婦）",a:600,f:0,from:82,to:82},
+    {on:false,n:"家電・家具の買い替え",a:20,f:1,from:65,to:90}
   ]};
-var KEY="rougo-check-v1",S;
+var KEY="rougo-check-v2",S;
 try{S=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){S=null;}
 if(!S||!S.ev)S=JSON.parse(JSON.stringify(EX));
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
