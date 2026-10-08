@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="5つのステップに数字を入れるだけで、退職するときに必要な金額と今のペースで足りるかが分かる無料ツール。登録不要。">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:title" content="老後資金チェック">
+<meta property="og:description" content="退職時に必要な金額と、今のペースで足りるかが5ステップで分かる">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fuku-sim.github.io/rougo/">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>老後資金チェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@600;800&display=swap">
+<style>
+/* Layout: 入力（5ステップ）を左、結果パネルを右に固定。スマホは1列＋下部に結果バー */
+:root{
+  --bg:#EEF1F4; --paper:#FFFFFF; --paper2:#F6F8FA; --ink:#1B2430; --ink2:#566170; --ink3:#8A94A1; --line:#D8DEE5; --line2:#E7EBF0;
+  --ai:#2D4F86; --ai-soft:#E2E9F4; --good:#2E7D4F; --good-soft:#E1F0E6; --warn:#A8620B; --warn-soft:#F7EBD8; --bad:#B03A3A; --bad-soft:#F6E2E2;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  --f-disp:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#12171D; --paper:#1A2129; --paper2:#1F2731; --ink:#E4E9EF; --ink2:#A2ADBA; --ink3:#727E8B; --line:#2E3843; --line2:#252E38;
+  --ai:#8EB0E6; --ai-soft:#22314A; --good:#74C493; --good-soft:#1C3326; --warn:#E6AE5C; --warn-soft:#382A15; --bad:#EC8787; --bad-soft:#3B2022;}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#12171D; --paper:#1A2129; --paper2:#1F2731; --ink:#E4E9EF; --ink2:#A2ADBA; --ink3:#727E8B; --line:#2E3843; --line2:#252E38;
+  --ai:#8EB0E6; --ai-soft:#22314A; --good:#74C493; --good-soft:#1C3326; --warn:#E6AE5C; --warn-soft:#382A15; --bad:#EC8787; --bad-soft:#3B2022;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 96px}
+.wrap{max-width:1120px;margin:0 auto}
+header.hero{padding-block:28px 18px;display:flex;flex-direction:column;gap:6px}
+header.hero h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,4.4vw,36px);margin:0;letter-spacing:.04em;text-wrap:balance}
+header.hero p{margin:0;color:var(--ink2);max-width:62ch}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.btn{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 14px;cursor:pointer}
+.btn:hover{border-color:var(--ai)}
+.btn.small{font-size:12.5px;padding:3px 10px}
+.btn.x{border-color:transparent;background:transparent;color:var(--ink3);padding:2px 8px}
+.btn.x:hover{color:var(--bad)}
+:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:22px;align-items:start}
+.steps{display:flex;flex-direction:column;gap:16px;min-width:0}
+section.step{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.step-h{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+.step-h b{font-family:var(--f-disp);font-weight:800;font-size:22px;color:var(--ai);line-height:1}
+.step-h h2{margin:0;font-size:17px;font-weight:700}
+.lead{margin:0 0 10px;font-size:13px;color:var(--ink2)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 22px}
+.f{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line2);min-width:0}
+.f label{font-size:14px}
+.f label small{display:block;font-size:11.5px;color:var(--ink3);line-height:1.4}
+.u{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--ink2);white-space:nowrap}
+input[type=number],input[type=text],select{font:inherit;font-size:15px;color:var(--ink);background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;min-width:0}
+input[type=number]{width:86px;text-align:right;font-variant-numeric:tabular-nums}
+input.age{width:62px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:13.5px;border:0;background:var(--paper2);color:var(--ink2);padding:4px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ai);color:var(--paper)}
+.hint{font-size:12.5px;color:var(--ink2);background:var(--paper2);border-radius:8px;padding:8px 12px;margin-top:10px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:8px 0}
+.check input{margin-top:5px}
+.tw{overflow-x:auto;margin-inline:-4px}
+table.ev{border-collapse:collapse;width:100%;font-size:14px}
+table.ev th{font-size:11.5px;color:var(--ink2);font-weight:400;text-align:left;padding:4px 5px;white-space:nowrap}
+table.ev td{padding:4px 5px;border-top:1px solid var(--line2);white-space:nowrap}
+table.ev tr.off td{opacity:.45}
+table.ev input[type=text]{width:180px}
+table.ev input[type=number]{width:74px}
+table.ev input.age{width:56px}
+aside.res{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.verdict{border-top:5px solid var(--ai)}
+.verdict.short{border-top-color:var(--bad)} .verdict.ok{border-top-color:var(--good)}
+.cap{font-size:12.5px;color:var(--ink2);margin:0}
+.big{font-family:var(--f-disp);font-weight:800;font-size:38px;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.big small{font-family:var(--f-body);font-size:15px;font-weight:700;margin-left:3px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pair div{background:var(--paper2);border-radius:8px;padding:8px 10px}
+.pair b{display:block;font-size:19px;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 12px;border-radius:99px;margin-top:8px}
+.pill.short{background:var(--bad-soft);color:var(--bad)} .pill.ok{background:var(--good-soft);color:var(--good)}
+.fix{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.fix li{padding-left:14px;position:relative}
+.fix li::before{content:"";position:absolute;left:2px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--ai)}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:3px 0;font-variant-numeric:tabular-nums}
+.kv.sub{color:var(--ink2)}
+.kv.tot{border-top:1px solid var(--line);margin-top:4px;padding-top:6px;font-weight:700}
+.panel h3{font-size:14.5px;margin:0 0 8px}
+svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
+.note{font-size:12px;color:var(--ink3);margin:8px 0 0}
+#copymsg{font-size:12.5px;color:var(--good)}
+.bar{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  aside.res{position:static}
+  .bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;justify-content:space-between;align-items:center;gap:10px;background:var(--paper);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .bar b{font-size:17px;font-variant-numeric:tabular-nums}
+  .bar a{color:var(--ai);font-size:13.5px}
+}
+@media (prefers-reduced-motion:no-preference){.big{transition:color .2s}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <h1>老後資金チェック</h1>
+    <p>5つのステップに数字を入れると、退職するときにいくら準備しておけばよいかと、今のペースで足りるかが分かります。金額はすべて今のお金の価値（物価上昇を除いた額）です。最初は50歳の夫婦の例が入っています。</p>
+    <div class="tools"><button class="btn small" id="b-reset" type="button">例の数字に戻す</button><button class="btn small" id="b-copy" type="button">結果をコピー</button><span id="copymsg" aria-live="polite"></span></div>
+  </header>
+
+  <div class="layout">
+    <div class="steps">
+      <section class="step" aria-labelledby="s1">
+        <div class="step-h"><b>1</b><h2 id="s1">家族と年齢</h2></div>
+        <p class="lead">退職金を受け取る年齢を「退職」とします。再雇用などで働き続ける分はステップ2で入れます。</p>
+        <div class="fields">
+          <div class="f"><label for="age">あなたの今の年齢</label><span class="u"><input type="number" class="age" id="age" min="20" max="80">歳</span></div>
+          <div class="f"><label>配偶者</label><span class="seg" role="group" aria-label="配偶者"><button type="button" id="sp-on">あり</button><button type="button" id="sp-off">なし</button></span></div>
+          <div class="f sp"><label for="sAge">配偶者の今の年齢</label><span class="u"><input type="number" class="age" id="sAge" min="20" max="90">歳</span></div>
+          <div class="f"><label for="retire">退職する年齢<small>退職金を受け取る年</small></label><span class="u"><input type="number" class="age" id="retire" min="40" max="80">歳</span></div>
+          <div class="f"><label for="endAge">何歳まで計算するか<small>長生きに備えるなら95〜100歳</small></label><span class="u"><input type="number" class="age" id="endAge" min="70" max="110">歳</span></div>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="s2">
+        <div class="step-h"><b>2</b><h2 id="s2">老後の収入</h2></div>
+        <p class="lead">年金は「ねんきん定期便」に載っている見込み額（額面）を月額で入れます。税金と社会保険料が引かれる分は、手取り率で調整します。</p>
+        <div class="fields">
+          <div class="f"><label for="pen1">あなたの年金<small>額面・月額</small></label><span class="u"><input type="number" id="pen1" step="0.1">万円</span></div>
+          <div class="f sp"><label for="pen2">配偶者の年金<small>額面・月額</small></label><span class="u"><input type="number" id="pen2" step="0.1">万円</span></div>
+          <div class="f"><label for="penAge">年金をもらい始める年齢</label><span class="u"><input type="number" class="age" id="penAge" min="60" max="75">歳</span></div>
+          <div class="f"><label for="penNet">年金の手取り率<small>目安は85〜90%</small></label><span class="u"><input type="number" id="penNet" class="age">%</span></div>
+          <div class="f"><label for="work">退職後に働いた収入<small>手取り・月額（再雇用など）</small></label><span class="u"><input type="number" id="work" step="0.1">万円</span></div>
+          <div class="f"><label for="workTo">何歳まで働くか</label><span class="u"><input type="number" class="age" id="workTo">歳</span></div>
+          <div class="f"><label for="other">その他の収入<small>家賃・事業・農業など 手取り・年額</small></label><span class="u"><input type="number" id="other">万円</span></div>
+          <div class="f"><label for="otherFrom">その他の収入の期間</label><span class="u"><input type="number" class="age" id="otherFrom">〜<input type="number" class="age" id="otherTo" aria-label="その他の収入の終わりの年齢">歳</span></div>
+        </div>
+        <label class="check"><input type="checkbox" id="slide"><span>年金の目減りを見込む<br><small style="color:var(--ink2)">年金は物価ほどは増えない仕組み（マクロ経済スライド）です。今の価値で年1%ずつ減り、今の約82%で下げ止まる想定にします。</small></span></label>
+      </section>
+
+      <section class="step" aria-labelledby="s3">
+        <div class="step-h"><b>3</b><h2 id="s3">老後の生活費</h2></div>
+        <p class="lead">食費・光熱費・通信費・日用品・交際費・保険料・税金など、毎月出ていくお金です。車や旅行のような大きな出費はステップ4で別に入れます。</p>
+        <div class="fields">
+          <div class="f"><label for="living">退職後の生活費<small>月額</small></label><span class="u"><input type="number" id="living" step="0.1">万円</span></div>
+          <div class="f"><label for="lateAge">生活費が下がる年齢<small>外出や食事が減る時期</small></label><span class="u"><input type="number" class="age" id="lateAge">歳から</span></div>
+          <div class="f"><label for="latePct">下がったあとの生活費</label><span class="u"><input type="number" class="age" id="latePct">%</span></div>
+        </div>
+        <div class="hint">目安：65歳以上の夫婦のみの無職世帯で月約28万円、単身で月約16万円（総務省 家計調査2024年、税・社会保険料を含む）。今の生活費から住宅ローン・教育費・貯金を引いた額から考えると、実感に近くなります。</div>
+      </section>
+
+      <section class="step" aria-labelledby="s4">
+        <div class="step-h"><b>4</b><h2 id="s4">老後の大きな出費</h2></div>
+        <p class="lead">見落としやすい出費の例が入っています。いらないものはチェックを外し、金額と年齢（あなたの年齢）を合わせてください。退職前に起きる出費は、準備できる額から差し引きます。</p>
+        <div class="tw"><table class="ev"><thead><tr><th>使う</th><th>内容</th><th>金額（万円）</th><th>頻度</th><th>開始</th><th>終了</th><th></th></tr></thead><tbody id="evbody"></tbody></table></div>
+        <div style="margin-top:8px"><button class="btn small" type="button" id="b-add">＋ 出費を追加</button></div>
+      </section>
+
+      <section class="step" aria-labelledby="s5">
+        <div class="step-h"><b>5</b><h2 id="s5">今の資産と貯め方</h2></div>
+        <p class="lead">利回りは資産全体の平均です。預金が多ければ低め、投資信託が多ければ高めに入れます。</p>
+        <div class="fields">
+          <div class="f"><label for="assets">今の貯蓄・投資の合計</label><span class="u"><input type="number" id="assets">万円</span></div>
+          <div class="f"><label for="monthly">退職までの積立・貯金<small>月額（ボーナス分は12で割る）</small></label><span class="u"><input type="number" id="monthly" step="0.1">万円</span></div>
+          <div class="f"><label for="lump">退職金・企業年金の一時金<small>手取り</small></label><span class="u"><input type="number" id="lump">万円</span></div>
+          <div class="f"><label for="ret">資産全体の利回り<small>年・名目</small></label><span class="u"><input type="number" id="ret" step="0.1" class="age">%</span></div>
+          <div class="f"><label for="infl">物価上昇率<small>年</small></label><span class="u"><input type="number" id="infl" step="0.1" class="age">%</span></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="res" id="result" aria-live="polite">
+      <div class="panel verdict" id="verdict"></div>
+      <div class="panel"><h3>必要な金額の内訳<span class="cap" style="font-weight:400;margin-left:6px" id="bd-cap"></span></h3><div id="breakdown"></div></div>
+      <div class="panel"><h3>資産の推移（今の価値）</h3><div id="chart"></div><p class="note">退職後も同じ利回りで運用を続ける前提です。運用益の税金、配偶者が亡くなった後の年金の変化は含みません。</p></div>
+    </aside>
+  </div>
+</div>
+<div class="bar" id="bar"><span id="bar-t"></span><a href="#result">結果を見る</a></div>
+
+<script>
+(function(){
+"use strict";
+var FREQ=[[0,"1回"],[1,"毎年"],[5,"5年ごと"],[10,"10年ごと"],[15,"15年ごと"],[20,"20年ごと"]];
+var EX={age:50,spouse:true,sAge:48,retire:60,endAge:95,pen1:15,pen2:8,penAge:65,penNet:90,work:20,workTo:64,other:0,otherFrom:65,otherTo:85,slide:true,
+  living:28,lateAge:80,latePct:80,assets:1200,monthly:5,lump:1500,ret:3,infl:2,
+  ev:[
+    {on:true,n:"住宅ローン（退職後に残る分）",a:0,f:1,from:60,to:65},
+    {on:true,n:"車の買い替え",a:250,f:10,from:55,to:74},
+    {on:true,n:"車の保険・税金・車検",a:15,f:1,from:60,to:74},
+    {on:true,n:"車を手放した後のタクシー・配車",a:36,f:1,from:75,to:95},
+    {on:true,n:"住宅のリフォーム・修繕",a:300,f:15,from:60,to:75},
+    {on:true,n:"旅行・趣味",a:50,f:1,from:65,to:79},
+    {on:true,n:"子の結婚・住宅の援助",a:200,f:0,from:58,to:58},
+    {on:true,n:"孫へのお祝い・お年玉",a:10,f:1,from:60,to:85},
+    {on:true,n:"医療費の備え（夫婦）",a:400,f:0,from:75,to:75},
+    {on:true,n:"介護の備え（夫婦）",a:1000,f:0,from:82,to:82},
+    {on:false,n:"家電・家具の買い替え",a:20,f:1,from:60,to:90}
+  ]};
+var KEY="rougo-check-v1",S;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){S=null;}
+if(!S||!S.ev)S=JSON.parse(JSON.stringify(EX));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function num(v){v=parseFloat(v);return isFinite(v)?v:0;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function man(v){var a=Math.abs(v),s=v<0?"−":"";if(a>=10000)return s+(a/10000).toFixed(2).replace(/\.?0+$/,"")+"億"+(a%10000>=1?"":"")+"円";return s+Math.round(a).toLocaleString()+"万円";}
+function manS(v){return man(v).replace(/円$/,"");}
+
+var IDS=["age","sAge","retire","endAge","pen1","pen2","penAge","penNet","work","workTo","other","otherFrom","otherTo","living","lateAge","latePct","assets","monthly","lump","ret","infl"];
+function fill(){IDS.forEach(function(k){document.getElementById(k).value=S[k];});
+  document.getElementById("slide").checked=!!S.slide;
+  document.getElementById("sp-on").setAttribute("aria-pressed",S.spouse);document.getElementById("sp-off").setAttribute("aria-pressed",!S.spouse);
+  document.querySelectorAll(".sp").forEach(function(el){el.hidden=!S.spouse;});
+  renderEv();}
+function renderEv(){var h="";S.ev.forEach(function(e,i){
+  h+='<tr class="'+(e.on?"":"off")+'"><td><input type="checkbox" id="ev-on-'+i+'" data-i="'+i+'" data-k="on"'+(e.on?" checked":"")+' aria-label="使う"></td>'+
+  '<td><input type="text" id="ev-n-'+i+'" data-i="'+i+'" data-k="n" value="'+esc(e.n)+'" aria-label="内容"></td>'+
+  '<td><input type="number" id="ev-a-'+i+'" data-i="'+i+'" data-k="a" value="'+e.a+'" aria-label="金額"></td>'+
+  '<td><select id="ev-f-'+i+'" data-i="'+i+'" data-k="f" aria-label="頻度">'+FREQ.map(function(f){return '<option value="'+f[0]+'"'+(num(e.f)===f[0]?" selected":"")+'>'+f[1]+'</option>';}).join("")+'</select></td>'+
+  '<td><input type="number" class="age" id="ev-from-'+i+'" data-i="'+i+'" data-k="from" value="'+e.from+'" aria-label="開始の年齢">歳</td>'+
+  '<td>'+(num(e.f)===0?'<span style="color:var(--ink3);font-size:12px">—</span>':'<input type="number" class="age" id="ev-to-'+i+'" data-i="'+i+'" data-k="to" value="'+e.to+'" aria-label="終了の年齢">歳')+'</td>'+
+  '<td><button type="button" class="btn x" data-del="'+i+'" aria-label="削除">✕</button></td></tr>';});
+  document.getElementById("evbody").innerHTML=h;}
+
+function evAmt(e,a){if(!e.on)return 0;var f=num(e.f),fr=num(e.from),to=f===0?fr:num(e.to);if(a<fr||a>to)return 0;if(f===0||f===1)return num(e.a);return (a-fr)%f===0?num(e.a):0;}
+
+function calc(){
+  var A=num(S.age),R=Math.max(A,num(S.retire)),E=Math.max(R,num(S.endAge)),dA=num(S.sAge)-A;
+  var rr=(1+num(S.ret)/100)/(1+num(S.infl)/100)-1,net=num(S.penNet)/100;
+  var W=num(S.assets),rows=[],WR=0,need=0,pvL=0,pvE=0,pvI=0,sumL=0,sumE=0,sumI=0,dep=null,preEv=0,lateF=0,annF=0;
+  for(var a=A;a<=E;a++){var t=a-A,m=S.slide?Math.max(0.824,Math.pow(0.99,t)):1;
+    var pen=0;if(a>=num(S.penAge))pen+=num(S.pen1)*12*net*m;if(S.spouse&&a+dA>=num(S.penAge)&&a+dA<=110)pen+=num(S.pen2)*12*net*m;
+    var ev=0;S.ev.forEach(function(e){ev+=evAmt(e,a);});
+    if(a<R){W+=num(S.monthly)*12+pen-ev;preEv+=ev;annF=(annF+1)*(1+rr);}
+    else{var inc=pen+(a<=num(S.workTo)?num(S.work)*12:0)+(a>=num(S.otherFrom)&&a<=num(S.otherTo)?num(S.other):0);
+      var lf=a>=num(S.lateAge)?num(S.latePct)/100:1,liv=num(S.living)*12*lf;
+      if(a===R){W+=num(S.lump);WR=W;}
+      var d=Math.pow(1+rr,a-R);pvL+=liv/d;pvE+=ev/d;pvI+=inc/d;sumL+=liv;sumE+=ev;sumI+=inc;lateF+=12*lf/d;
+      W+=inc-liv-ev;}
+    if(W<0&&dep===null)dep=a;
+    rows.push({a:a,w:W});W*=1+rr;}
+  need=pvL+pvE-pvI;var gap=need-WR;
+  return {A:A,R:R,E:E,rr:rr,rows:rows,WR:WR,need:need,gap:gap,dep:dep,pvL:pvL,pvE:pvE,pvI:pvI,sumL:sumL,sumE:sumE,sumI:sumI,preEv:preEv,
+    addMonthly:annF>0?gap/(12*annF):NaN,cutMonthly:lateF>0?gap/lateF:NaN,last:rows[rows.length-1].w};
+}
+
+function chart(c){var W=340,H=190,pl=46,pr=10,pt=12,pb=26,iw=W-pl-pr,ih=H-pt-pb,rs=c.rows,n=rs.length;
+  var mx=0,mn=0;rs.forEach(function(r){mx=Math.max(mx,r.w);mn=Math.min(mn,r.w);});
+  var st=nice((mx-mn)/4);mx=Math.ceil(mx/st)*st||st;mn=Math.floor(mn/st)*st;
+  function X(i){return pl+iw*(n<=1?0:i/(n-1));}function Y(v){return pt+ih*(mx-v)/(mx-mn||1);}
+  var g="";for(var v=mn;v<=mx+1e-6;v+=st){g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" style="stroke:var(--line2)"/><text x="'+(pl-5)+'" y="'+(Y(v)+4).toFixed(1)+'" text-anchor="end">'+(Math.abs(v)>=10000?(v/10000).toFixed(1).replace(/\.0$/,"")+"億":Math.round(v).toLocaleString())+'</text>';}
+  var pos=rs.map(function(r,i){return X(i).toFixed(1)+","+Y(Math.max(0,r.w)).toFixed(1);}).join(" ");
+  var area='<polygon points="'+X(0)+","+Y(0)+" "+pos+" "+X(n-1)+","+Y(0)+'" style="fill:var(--ai-soft)"/><polyline points="'+pos+'" fill="none" style="stroke:var(--ai)" stroke-width="2"/>';
+  var neg=c.dep!==null?'<polyline points="'+rs.map(function(r,i){return X(i).toFixed(1)+","+Y(Math.min(0,r.w)).toFixed(1);}).join(" ")+'" fill="none" style="stroke:var(--bad)" stroke-width="2"/>':"";
+  var xt="";rs.forEach(function(r,i){if(r.a%10===0)xt+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+r.a+'歳</text>';});
+  var ri=c.R-c.A,mk='<line x1="'+X(ri)+'" x2="'+X(ri)+'" y1="'+pt+'" y2="'+(H-pb)+'" style="stroke:var(--ink3)" stroke-dasharray="3 3"/><text x="'+(X(ri)+4)+'" y="'+(pt+10)+'">退職</text>';
+  if(c.dep!==null){var di=c.dep-c.A;mk+='<circle cx="'+X(di)+'" cy="'+Y(0)+'" r="4" style="fill:var(--bad)"/>';}
+  var z=mn<0?'<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" style="stroke:var(--ink3)"/>':"";
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="年齢ごとの資産の推移">'+g+area+neg+z+mk+xt+'</svg><p class="cap">単位：万円</p>';}
+function nice(x){if(x<=0)return 500;var p=Math.pow(10,Math.floor(Math.log10(x))),m=x/p;return (m<=1?1:m<=2?2:m<=5?5:10)*p;}
+
+var last=null;
+function render(){var c=calc();last=c;var short=c.gap>0.5;
+  var h='<p class="cap">'+c.R+'歳で退職するときに必要な金額</p><div class="big">'+manS(c.need).replace(/(万|億)$/,"<small>$1円</small>")+'</div>'+
+    '<div class="pair"><div><span class="cap">準備できる見込み</span><b>'+manS(c.WR)+'円</b></div><div><span class="cap">'+(short?"不足":"余裕")+'</span><b style="color:var('+(short?"--bad":"--good")+')">'+manS(Math.abs(c.gap))+'円</b></div></div>'+
+    '<span class="pill '+(short?"short":"ok")+'">'+(short?(c.dep!==null?c.dep+"歳で資産が尽きる見込み":"不足しています"):c.E+"歳まで資産が持つ見込み")+'</span>';
+  if(short){h+='<ul class="fix">';
+    if(c.R>c.A&&isFinite(c.addMonthly))h+='<li>退職までの積立を<b>月'+c.addMonthly.toFixed(1)+'万円</b>増やすと届きます</li>';
+    if(isFinite(c.cutMonthly))h+='<li>または、老後の生活費を<b>月'+c.cutMonthly.toFixed(1)+'万円</b>下げると届きます</li>';
+    h+='<li>働く期間を延ばす、年金の受け取りを遅らせる（1年遅らせると年金が8.4%増える）のも効きます</li></ul>';}
+  else h+='<p class="cap" style="margin-top:10px">'+c.E+'歳の時点で今の価値で約'+manS(c.last)+'円が残る計算です。旅行や援助を増やす余地があります。</p>';
+  var v=document.getElementById("verdict");v.innerHTML=h;v.className="panel verdict "+(short?"short":"ok");
+  var runUp=c.sumL+c.sumE-c.sumI-c.need;
+  document.getElementById("bd-cap").textContent=c.R+"〜"+c.E+"歳";
+  document.getElementById("breakdown").innerHTML=
+    '<div class="kv"><span>生活費</span><span>'+man(c.sumL)+'</span></div>'+
+    '<div class="kv"><span>大きな出費</span><span>'+man(c.sumE)+'</span></div>'+
+    '<div class="kv"><span>年金・働いた収入など</span><span>−'+man(c.sumI)+'</span></div>'+
+    '<div class="kv sub"><span>退職後の運用で増える分</span><span>'+(runUp>=0?"−":"+")+man(Math.abs(runUp))+'</span></div>'+
+    '<div class="kv tot"><span>退職時に必要な金額</span><span>'+man(c.need)+'</span></div>'+
+    (c.preEv>0?'<p class="note">退職前の大きな出費 '+man(c.preEv)+' は「準備できる見込み」から差し引いています。</p>':'')+
+    '<p class="note">物価を除いた実質の利回りは年'+(c.rr*100).toFixed(1)+'%です。</p>';
+  document.getElementById("chart").innerHTML=chart(c);
+  document.getElementById("bar-t").innerHTML=(short?'不足 <b style="color:var(--bad)">':'余裕 <b style="color:var(--good)">')+manS(Math.abs(c.gap))+'円</b>';
+  save();}
+
+document.addEventListener("input",function(e){var t=e.target;
+  if(IDS.indexOf(t.id)>=0){S[t.id]=num(t.value);render();return;}
+  var i=t.getAttribute("data-i");if(i!=null&&t.type!=="checkbox"&&t.tagName!=="SELECT"){var k=t.getAttribute("data-k");S.ev[+i][k]=k==="n"?t.value:num(t.value);render();}});
+document.addEventListener("change",function(e){var t=e.target;
+  if(t.id==="slide"){S.slide=t.checked;render();return;}
+  var i=t.getAttribute("data-i");if(i==null)return;var k=t.getAttribute("data-k"),ev=S.ev[+i];
+  if(k==="on"){ev.on=t.checked;}else if(k==="f"){ev.f=num(t.value);if(ev.f!==0&&num(ev.to)<num(ev.from))ev.to=ev.from;}else return;
+  renderEv();render();});
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.id==="sp-on"||b.id==="sp-off"){S.spouse=b.id==="sp-on";fill();render();}
+  else if(b.id==="b-add"){S.ev.push({on:true,n:"新しい出費",a:0,f:0,from:num(S.retire),to:num(S.retire)});renderEv();render();}
+  else if(b.hasAttribute("data-del")){S.ev.splice(+b.getAttribute("data-del"),1);renderEv();render();}
+  else if(b.id==="b-reset"){S=JSON.parse(JSON.stringify(EX));fill();render();}
+  else if(b.id==="b-copy"){var c=last,t="【老後資金チェック】\n"+c.R+"歳で退職するときに必要な金額："+man(c.need)+"\n準備できる見込み："+man(c.WR)+"\n"+(c.gap>0.5?"不足："+man(c.gap)+(c.dep!==null?"（"+c.dep+"歳で資産が尽きる見込み）":""):"余裕："+man(-c.gap))+"\n（今のお金の価値・"+c.E+"歳まで）";
+    var m=document.getElementById("copymsg");
+    try{navigator.clipboard.writeText(t).then(function(){m.textContent="コピーしました";},function(){m.textContent="コピーできませんでした";});}catch(x){m.textContent="コピーできませんでした";}}});
+fill();render();
+})();
+</script>
+
+</body>
+</html>
