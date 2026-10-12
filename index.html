@@ -52,8 +52,8 @@ section.step{background:var(--paper);border:1px solid var(--line);border-radius:
 .f label{font-size:14px}
 .f label small{display:block;font-size:11.5px;color:var(--ink3);line-height:1.4}
 .u{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--ink2);white-space:nowrap}
-input[type=number],input[type=text],select{font:inherit;font-size:15px;color:var(--ink);background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;min-width:0}
-input[type=number]{width:86px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=text],select{font:inherit;font-size:15px;color:var(--ink);background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;min-width:0}
+input[data-n]{width:86px;text-align:right;font-variant-numeric:tabular-nums}
 input.age{width:62px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{font:inherit;font-size:13.5px;border:0;background:var(--paper2);color:var(--ink2);padding:4px 14px;cursor:pointer}
@@ -66,8 +66,8 @@ table.ev{border-collapse:collapse;width:100%;font-size:14px}
 table.ev th{font-size:11.5px;color:var(--ink2);font-weight:400;text-align:left;padding:4px 5px;white-space:nowrap}
 table.ev td{padding:4px 5px;border-top:1px solid var(--line2);white-space:nowrap}
 table.ev tr.off td{opacity:.45}
-table.ev input[type=text]{width:180px}
-table.ev input[type=number]{width:74px}
+table.ev input[type=text]:not([data-n]){width:180px}
+table.ev input[data-n]{width:74px}
 table.ev input.age{width:56px}
 aside.res{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;gap:14px;min-width:0}
 .panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
@@ -118,11 +118,11 @@ svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
         <div class="step-h"><b>1</b><h2 id="s1">家族と年齢</h2></div>
         <p class="lead">退職金を受け取る年齢を「退職」とします。再雇用などで働き続ける分はステップ2で入れます。</p>
         <div class="fields">
-          <div class="f"><label for="age">あなたの今の年齢</label><span class="u"><input type="number" class="age" id="age" min="20" max="80">歳</span></div>
+          <div class="f"><label for="age">あなたの今の年齢</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="age" min="20" max="80">歳</span></div>
           <div class="f"><label>配偶者</label><span class="seg" role="group" aria-label="配偶者"><button type="button" id="sp-on">あり</button><button type="button" id="sp-off">なし</button></span></div>
-          <div class="f sp"><label for="sAge">配偶者の今の年齢</label><span class="u"><input type="number" class="age" id="sAge" min="20" max="90">歳</span></div>
-          <div class="f"><label for="retire">退職する年齢<small>退職金を受け取る年</small></label><span class="u"><input type="number" class="age" id="retire" min="40" max="80">歳</span></div>
-          <div class="f"><label for="endAge">何歳まで計算するか<small>長生きに備えるなら95〜100歳</small></label><span class="u"><input type="number" class="age" id="endAge" min="70" max="110">歳</span></div>
+          <div class="f sp"><label for="sAge">配偶者の今の年齢</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="sAge" min="20" max="90">歳</span></div>
+          <div class="f"><label for="retire">退職する年齢<small>退職金を受け取る年</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="retire" min="40" max="80">歳</span></div>
+          <div class="f"><label for="endAge">何歳まで計算するか<small>長生きに備えるなら95〜100歳</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="endAge" min="70" max="110">歳</span></div>
         </div>
       </section>
 
@@ -130,14 +130,14 @@ svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
         <div class="step-h"><b>2</b><h2 id="s2">老後の収入</h2></div>
         <p class="lead">年金は「ねんきん定期便」に載っている見込み額（額面）を月額で入れます。税金と社会保険料が引かれる分は、手取り率で調整します。</p>
         <div class="fields">
-          <div class="f"><label for="pen1">あなたの年金<small>額面・月額</small></label><span class="u"><input type="number" id="pen1" step="0.1">万円</span></div>
-          <div class="f sp"><label for="pen2">配偶者の年金<small>額面・月額</small></label><span class="u"><input type="number" id="pen2" step="0.1">万円</span></div>
-          <div class="f"><label for="penAge">年金をもらい始める年齢</label><span class="u"><input type="number" class="age" id="penAge" min="60" max="75">歳</span></div>
-          <div class="f"><label for="penNet">年金の手取り率<small>目安は85〜90%</small></label><span class="u"><input type="number" id="penNet" class="age">%</span></div>
-          <div class="f"><label for="work">退職後に働いた収入<small>手取り・月額（再雇用など）</small></label><span class="u"><input type="number" id="work" step="0.1">万円</span></div>
-          <div class="f"><label for="workTo">何歳まで働くか</label><span class="u"><input type="number" class="age" id="workTo">歳</span></div>
-          <div class="f"><label for="other">その他の収入<small>家賃・事業・農業など 手取り・年額</small></label><span class="u"><input type="number" id="other">万円</span></div>
-          <div class="f"><label for="otherFrom">その他の収入の期間</label><span class="u"><input type="number" class="age" id="otherFrom">〜<input type="number" class="age" id="otherTo" aria-label="その他の収入の終わりの年齢">歳</span></div>
+          <div class="f"><label for="pen1">あなたの年金<small>額面・月額</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="pen1" step="0.1">万円</span></div>
+          <div class="f sp"><label for="pen2">配偶者の年金<small>額面・月額</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="pen2" step="0.1">万円</span></div>
+          <div class="f"><label for="penAge">年金をもらい始める年齢</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="penAge" min="60" max="75">歳</span></div>
+          <div class="f"><label for="penNet">年金の手取り率<small>目安は85〜90%</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="penNet" class="age">%</span></div>
+          <div class="f"><label for="work">退職後に働いた収入<small>手取り・月額（再雇用など）</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="work" step="0.1">万円</span></div>
+          <div class="f"><label for="workTo">何歳まで働くか</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="workTo">歳</span></div>
+          <div class="f"><label for="other">その他の収入<small>家賃・事業・農業など 手取り・年額</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="other">万円</span></div>
+          <div class="f"><label for="otherFrom">その他の収入の期間</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="otherFrom">〜<input type="text" inputmode="decimal" data-n="1" class="age" id="otherTo" aria-label="その他の収入の終わりの年齢">歳</span></div>
         </div>
         <label class="check"><input type="checkbox" id="slide"><span>年金の目減りを見込む<br><small style="color:var(--ink2)">年金は物価ほどは増えない仕組み（マクロ経済スライド）です。今の価値で年1%ずつ減り、今の約82%で下げ止まる想定にします。</small></span></label>
       </section>
@@ -146,9 +146,9 @@ svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
         <div class="step-h"><b>3</b><h2 id="s3">老後の生活費</h2></div>
         <p class="lead">食費・光熱費・通信費・日用品・交際費・保険料・税金など、毎月出ていくお金です。車や旅行のような大きな出費はステップ4で別に入れます。</p>
         <div class="fields">
-          <div class="f"><label for="living">退職後の生活費<small>月額</small></label><span class="u"><input type="number" id="living" step="0.1">万円</span></div>
-          <div class="f"><label for="lateAge">生活費が下がる年齢<small>外出や食事が減る時期</small></label><span class="u"><input type="number" class="age" id="lateAge">歳から</span></div>
-          <div class="f"><label for="latePct">下がったあとの生活費</label><span class="u"><input type="number" class="age" id="latePct">%</span></div>
+          <div class="f"><label for="living">退職後の生活費<small>月額</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="living" step="0.1">万円</span></div>
+          <div class="f"><label for="lateAge">生活費が下がる年齢<small>外出や食事が減る時期</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="lateAge">歳から</span></div>
+          <div class="f"><label for="latePct">下がったあとの生活費</label><span class="u"><input type="text" inputmode="decimal" data-n="1" class="age" id="latePct">%</span></div>
         </div>
         <div class="hint">目安：65歳以上の夫婦のみの無職世帯で月約28万円、単身で月約16万円（総務省 家計調査2024年、税・社会保険料を含む）。今の生活費から住宅ローン・教育費・貯金を引いた額から考えると、実感に近くなります。</div>
       </section>
@@ -162,13 +162,13 @@ svg text{font-family:var(--f-body);font-size:11px;fill:var(--ink2)}
 
       <section class="step" aria-labelledby="s5">
         <div class="step-h"><b>5</b><h2 id="s5">今の資産と貯め方</h2></div>
-        <p class="lead">利回りは資産全体の平均です。預金が多ければ低め、投資信託が多ければ高めに入れます。</p>
+        <p class="lead">利回りは資産全体の平均です。預金が多ければ低め、投資信託が多ければ高めに入れます。数字は半角でも全角でも入力できます。</p>
         <div class="fields">
-          <div class="f"><label for="assets">今の貯蓄・投資の合計</label><span class="u"><input type="number" id="assets">万円</span></div>
-          <div class="f"><label for="monthly">退職までの積立・貯金<small>月額（ボーナス分は12で割る）</small></label><span class="u"><input type="number" id="monthly" step="0.1">万円</span></div>
-          <div class="f"><label for="lump">退職金・企業年金の一時金<small>手取り</small></label><span class="u"><input type="number" id="lump">万円</span></div>
-          <div class="f"><label for="ret">資産全体の利回り<small>年・名目</small></label><span class="u"><input type="number" id="ret" step="0.1" class="age">%</span></div>
-          <div class="f"><label for="infl">物価上昇率<small>年</small></label><span class="u"><input type="number" id="infl" step="0.1" class="age">%</span></div>
+          <div class="f"><label for="assets">今の貯蓄・投資の合計</label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="assets">万円</span></div>
+          <div class="f"><label for="monthly">退職までの積立・貯金<small>月額（ボーナス分は12で割る）</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="monthly" step="0.1">万円</span></div>
+          <div class="f"><label for="lump">退職金・企業年金の一時金<small>手取り</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="lump">万円</span></div>
+          <div class="f"><label for="ret">資産全体の利回り<small>年・名目</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="ret" step="0.1" class="age">%</span></div>
+          <div class="f"><label for="infl">物価上昇率<small>年</small></label><span class="u"><input type="text" inputmode="decimal" data-n="1" id="infl" step="0.1" class="age">%</span></div>
         </div>
       </section>
     </div>
@@ -205,7 +205,8 @@ var KEY="rougo-check-v2",S;
 try{S=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){S=null;}
 if(!S||!S.ev)S=JSON.parse(JSON.stringify(EX));
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
-function num(v){v=parseFloat(v);return isFinite(v)?v:0;}
+function han(v){return String(v==null?"":v).replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/[．。]/g,".").replace(/[，、,\s]/g,"").replace(/[ー−－―]/g,"-");}
+function num(v){v=parseFloat(han(v));return isFinite(v)?v:0;}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function man(v){var a=Math.abs(v),s=v<0?"−":"";if(a>=10000)return s+(a/10000).toFixed(2).replace(/\.?0+$/,"")+"億"+(a%10000>=1?"":"")+"円";return s+Math.round(a).toLocaleString()+"万円";}
 function manS(v){return man(v).replace(/円$/,"");}
@@ -219,10 +220,10 @@ function fill(){IDS.forEach(function(k){document.getElementById(k).value=S[k];})
 function renderEv(){var h="";S.ev.forEach(function(e,i){
   h+='<tr class="'+(e.on?"":"off")+'"><td><input type="checkbox" id="ev-on-'+i+'" data-i="'+i+'" data-k="on"'+(e.on?" checked":"")+' aria-label="使う"></td>'+
   '<td><input type="text" id="ev-n-'+i+'" data-i="'+i+'" data-k="n" value="'+esc(e.n)+'" aria-label="内容"></td>'+
-  '<td><input type="number" id="ev-a-'+i+'" data-i="'+i+'" data-k="a" value="'+e.a+'" aria-label="金額"></td>'+
+  '<td><input type="text" inputmode="decimal" data-n="1" id="ev-a-'+i+'" data-i="'+i+'" data-k="a" value="'+e.a+'" aria-label="金額"></td>'+
   '<td><select id="ev-f-'+i+'" data-i="'+i+'" data-k="f" aria-label="頻度">'+FREQ.map(function(f){return '<option value="'+f[0]+'"'+(num(e.f)===f[0]?" selected":"")+'>'+f[1]+'</option>';}).join("")+'</select></td>'+
-  '<td><input type="number" class="age" id="ev-from-'+i+'" data-i="'+i+'" data-k="from" value="'+e.from+'" aria-label="開始の年齢">歳</td>'+
-  '<td>'+(num(e.f)===0?'<span style="color:var(--ink3);font-size:12px">—</span>':'<input type="number" class="age" id="ev-to-'+i+'" data-i="'+i+'" data-k="to" value="'+e.to+'" aria-label="終了の年齢">歳')+'</td>'+
+  '<td><input type="text" inputmode="decimal" data-n="1" class="age" id="ev-from-'+i+'" data-i="'+i+'" data-k="from" value="'+e.from+'" aria-label="開始の年齢">歳</td>'+
+  '<td>'+(num(e.f)===0?'<span style="color:var(--ink3);font-size:12px">—</span>':'<input type="text" inputmode="decimal" data-n="1" class="age" id="ev-to-'+i+'" data-i="'+i+'" data-k="to" value="'+e.to+'" aria-label="終了の年齢">歳')+'</td>'+
   '<td><button type="button" class="btn x" data-del="'+i+'" aria-label="削除">✕</button></td></tr>';});
   document.getElementById("evbody").innerHTML=h;}
 
@@ -292,6 +293,7 @@ document.addEventListener("input",function(e){var t=e.target;
   if(IDS.indexOf(t.id)>=0){S[t.id]=num(t.value);render();return;}
   var i=t.getAttribute("data-i");if(i!=null&&t.type!=="checkbox"&&t.tagName!=="SELECT"){var k=t.getAttribute("data-k");S.ev[+i][k]=k==="n"?t.value:num(t.value);render();}});
 document.addEventListener("change",function(e){var t=e.target;
+  if(t.getAttribute("data-n")&&t.value!==""){var hv=han(t.value);if(hv!==t.value)t.value=isFinite(parseFloat(hv))?String(parseFloat(hv)):"";}
   if(t.id==="slide"){S.slide=t.checked;render();return;}
   var i=t.getAttribute("data-i");if(i==null)return;var k=t.getAttribute("data-k"),ev=S.ev[+i];
   if(k==="on"){ev.on=t.checked;}else if(k==="f"){ev.f=num(t.value);if(ev.f!==0&&num(ev.to)<num(ev.from))ev.to=ev.from;}else return;
